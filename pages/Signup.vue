@@ -1,7 +1,7 @@
 <template>
   <div class="login-container d-flex align-items-center justify-content-center vh-100 bg-light">
     <div class="card shadow p-4 rounded-4" style="width: 100%; max-width: 400px;">
-      <h2 class="text-center mb-4 text-primary fw-bold">{{ $t('create account')}}</h2>
+      <h2 class="text-center mb-4 text-primary fw-bold">{{ $t('create account') }}</h2>
 
       <form @submit.prevent="handleSubmit">
         <div class="mb-3">
@@ -50,6 +50,8 @@ import ThemeColor from "~/enums/ThemeColor.js";
 
 // Services
 import { t } from "~/services/language.service.js";
+import TokenService from "~/services/token.service.js";
+
 
 export default {
   name: 'Signup',
@@ -65,14 +67,16 @@ export default {
 
     async function handleSubmit() {
       try {
-        await authStore.signup(email.value, password.value)
-        showToast({
-          theme: ThemeColor.SUCCESS,
-          body:t('login success'),
-        });
+        authStore.signup(email.value, password.value).then(( response ) => {
+          showToast({
+            theme: ThemeColor.SUCCESS,
+            body: t('login success'),
+          });
+          TokenService.set(response.accessToken)
+          return router.push('/dashboard')
+        })
 
-        return router.push('/dashboard')
-      } catch (error) {
+      } catch ( error ) {
         showToast({
           theme: ThemeColor.DANGER,
           body: error.message

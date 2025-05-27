@@ -50,6 +50,7 @@ import FirebaseMessages from "~/enums/FirebaseMessages.js";
 
 // Services
 import { t } from "@/services/language.service";
+import TokenService from "~/services/token.service.js";
 
 export default {
   name: 'Login',
@@ -65,12 +66,14 @@ export default {
 
     async function handleSubmit() {
       try {
-        await authStore.login(email.value, password.value)
-        showToast({
-          theme: ThemeColor.SUCCESS,
-          body:t('login success'),
-        });
-        return router.push('/dashboard')
+        authStore.login(email.value, password.value).then(( response ) => {
+          showToast({
+            theme: ThemeColor.SUCCESS,
+            body: t('login success'),
+          });
+          TokenService.set(response.accessToken)
+          return router.push('/dashboard')
+        })
       } catch ( error ) {
         showToast({
           theme: ThemeColor.DANGER,
