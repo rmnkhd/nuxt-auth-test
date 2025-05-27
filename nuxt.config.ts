@@ -2,8 +2,10 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-05-15',
   devtools: { enabled: true },
+  modules: [
+      '@pinia/nuxt',
+  ],
   plugins: [
-    '~/plugins/firebase.js',
     '~/plugins/i18n.js'
   ],
   css: [

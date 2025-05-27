@@ -4,5 +4,7 @@
   "login" : "login",
   "create account" : "create account",
   "login to account" : "login to account",
-  "register" : "register"
+  "register" : "register",
+  "there is no user with this email in the system." : "there is no user with this email in the system.",
+  "login success" : "login success"
 }

@@ -1,7 +1,7 @@
 <template>
   <div class="login-container d-flex align-items-center justify-content-center vh-100 bg-light">
     <div class="card shadow p-4 rounded-4" style="width: 100%; max-width: 400px;">
-      <h2 class="text-center mb-4 text-primary fw-bold">{{ $t('login to account')}}</h2>
+      <h2 class="text-center mb-4 text-primary fw-bold">{{ $t('login to account') }}</h2>
 
       <form @submit.prevent="handleSubmit">
         <div class="mb-3">
@@ -38,16 +38,47 @@
 // Vue
 import { ref } from 'vue'
 
+// Stores
+import { useAuthStore } from "~/store/auth.js";
+
+// Composable
+import { useToast } from '@/composables/toast.composable';
+
+// Enums
+import ThemeColor from "~/enums/ThemeColor.js";
+import FirebaseMessages from "~/enums/FirebaseMessages.js";
+
+// Services
+import { t } from "@/services/language.service";
+
 export default {
   name: 'Login',
 
   setup() {
+    const router = useRouter()
+    const authStore = useAuthStore()
+
+    const { showToast } = useToast();
+
     const email = ref('')
     const password = ref('')
 
-    function handleSubmit() {
-      console.log('📥 Email:', email.value)
-      console.log('🔐 Password:', password.value)
+    async function handleSubmit() {
+      try {
+        await authStore.login(email.value, password.value)
+        showToast({
+          theme: ThemeColor.SUCCESS,
+          body:t('login success'),
+        });
+        return router.push('/dashboard')
+      } catch ( error ) {
+        showToast({
+          theme: ThemeColor.DANGER,
+          body: error.message === FirebaseMessages.INVALID_LOGIN_CREDENTIALS ?
+              t('there is no user with this email in the system.')
+              : error.message
+        });
+      }
     }
 
     return {

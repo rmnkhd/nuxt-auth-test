@@ -35,19 +35,49 @@
 </template>
 
 <script>
+
 // Vue
 import { ref } from 'vue'
+
+// Stores
+import { useAuthStore } from "~/store/auth.js";
+
+// Composable
+import { useToast } from "~/composables/toast.composable.js";
+
+// Enums
+import ThemeColor from "~/enums/ThemeColor.js";
+
+// Services
+import { t } from "~/services/language.service.js";
 
 export default {
   name: 'Signup',
 
   setup() {
+    const authStore = useAuthStore()
+    const router = useRouter()
+
+    const { showToast } = useToast();
+
     const email = ref('')
     const password = ref('')
 
-    function handleSubmit() {
-      console.log('📥 Email:', email.value)
-      console.log('🔐 Password:', password.value)
+    async function handleSubmit() {
+      try {
+        await authStore.signup(email.value, password.value)
+        showToast({
+          theme: ThemeColor.SUCCESS,
+          body:t('login success'),
+        });
+
+        return router.push('/dashboard')
+      } catch (error) {
+        showToast({
+          theme: ThemeColor.DANGER,
+          body: error.message
+        });
+      }
     }
 
     return {
