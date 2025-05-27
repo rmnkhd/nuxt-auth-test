@@ -5,5 +5,23 @@ export default defineNuxtConfig({
   plugins: [
     '~/plugins/firebase.js',
   ],
-  css: ['~/assets/app.css'],
+  css: [
+      'bootstrap/dist/css/bootstrap.min.css',
+      'bootstrap-rtl/dist/css/bootstrap-rtl.min.css',
+      '~/assets/app.css'
+  ],
+  app: {
+        head: {
+            htmlAttrs: {
+                dir: 'rtl',
+                lang: 'fa',
+            },
+            link: [
+                {
+                    rel: 'stylesheet',
+                    href: 'https://fonts.googleapis.com/css2?family=Vazirmatn&display=swap',
+                },
+            ],
+        },
+    },
 })
