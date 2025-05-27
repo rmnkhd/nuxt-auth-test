@@ -4,6 +4,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   plugins: [
     '~/plugins/firebase.js',
+    '~/plugins/i18n.js'
   ],
   css: [
       'bootstrap/dist/css/bootstrap.min.css',

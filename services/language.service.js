@@ -57,7 +57,8 @@ class LanguageService {
 export default LanguageService;
 
 const vueI18N = createVueI18N({
-    locale: LanguageService.get(),
+    // locale: LanguageService.get(),
+    locale: 'fa',
     fallbackLocale: LanguageService.DEFAULT,
     messages: { en, fa }
 });

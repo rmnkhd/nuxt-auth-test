@@ -1,7 +1,7 @@
 <template>
   <div class="login-container d-flex align-items-center justify-content-center vh-100 bg-light">
     <div class="card shadow p-4 rounded-4" style="width: 100%; max-width: 400px;">
-      <h2 class="text-center mb-4 text-primary fw-bold">{{ $t('create account')}}</h2>
+      <h2 class="text-center mb-4 text-primary fw-bold">{{ $t('login to account')}}</h2>
 
       <form @submit.prevent="handleSubmit">
         <div class="mb-3">
@@ -28,7 +28,7 @@
           />
         </div>
 
-        <button type="submit" class="btn btn-primary w-100 mt-3">{{ $t('register') }}</button>
+        <button type="submit" class="btn btn-primary w-100 mt-3">{{ $t('login') }}</button>
       </form>
     </div>
   </div>
@@ -39,7 +39,7 @@
 import { ref } from 'vue'
 
 export default {
-  name: 'Signup',
+  name: 'Login',
 
   setup() {
     const email = ref('')
