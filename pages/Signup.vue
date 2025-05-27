@@ -11,9 +11,12 @@
               class="form-control"
               id="email"
               v-model="email"
-              required
+              :class="{ 'is-invalid': $v.email.$error }"
               placeholder="you@example.com"
           />
+          <div class="invalid-feedback" v-if="$v.email.$error">
+            {{ $t('invalid email') }}
+          </div>
         </div>
 
         <div class="mb-3">
@@ -23,9 +26,27 @@
               class="form-control"
               id="password"
               v-model="password"
-              required
+              :class="{ 'is-invalid': $v.password.$error }"
               placeholder="********"
           />
+          <div class="invalid-feedback" v-if="$v.password.$error">
+            {{ $t('password required') }}
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="repeatPassword" class="form-label">{{ $t('repeat password') }}</label>
+          <input
+              type="password"
+              class="form-control"
+              id="repeatPassword"
+              v-model="repeatPassword"
+              :class="{ 'is-invalid': $v.repeatPassword.$error }"
+              placeholder="********"
+          />
+          <div class="invalid-feedback" v-if="$v.repeatPassword.$error">
+            {{ $t('passwords do not match') }}
+          </div>
         </div>
 
         <button type="submit" class="btn btn-primary w-100 mt-3">{{ $t('register') }}</button>
@@ -35,23 +56,25 @@
 </template>
 
 <script>
-
 // Vue
 import { ref } from 'vue'
 
+// validators
+import useVuelidate from '@vuelidate/core'
+import { required, sameAs } from '@vuelidate/validators'
+
 // Stores
-import { useAuthStore } from "~/store/auth.js";
+import { useAuthStore } from "~/store/auth.js"
 
 // Composable
-import { useToast } from "~/composables/toast.composable.js";
+import { useToast } from "~/composables/toast.composable.js"
 
 // Enums
-import ThemeColor from "~/enums/ThemeColor.js";
+import ThemeColor from "~/enums/ThemeColor.js"
 
 // Services
-import { t } from "~/services/language.service.js";
-import TokenService from "~/services/token.service.js";
-
+import { t } from "~/services/language.service.js"
+import TokenService from "~/services/token.service.js"
 
 export default {
   name: 'Signup',
@@ -59,39 +82,50 @@ export default {
   setup() {
     const authStore = useAuthStore()
     const router = useRouter()
-
-    const { showToast } = useToast();
+    const { showToast } = useToast()
 
     const email = ref('')
     const password = ref('')
+    const repeatPassword = ref('')
+
+    const rules = {
+      email: { required, email },
+      password: { required },
+      repeatPassword: { required, sameAsPassword: sameAs(password) }
+    }
+
+    const v$ = useVuelidate(rules, { email, password, repeatPassword })
 
     async function handleSubmit() {
+      v$.value.$touch()
+      if (v$.value.$invalid) return
+
       try {
-        authStore.signup(email.value, password.value).then(( response ) => {
-          showToast({
-            theme: ThemeColor.SUCCESS,
-            body: t('login success'),
-          });
-          TokenService.set(response.accessToken)
-          return router.push('/dashboard')
+        const response = await authStore.signup(email.value, password.value)
+
+        showToast({
+          theme: ThemeColor.SUCCESS,
+          body: t('login success'),
         })
 
-      } catch ( error ) {
+        TokenService.set(response.accessToken)
+        return router.push('/dashboard')
+
+      } catch (error) {
         showToast({
           theme: ThemeColor.DANGER,
           body: error.message
-        });
+        })
       }
     }
 
     return {
       email,
       password,
-
-      handleSubmit
-    };
+      repeatPassword,
+      handleSubmit,
+      $v: v$
+    }
   }
-};
-
+}
 </script>
-

@@ -1,10 +1,11 @@
 {
   "email" : "ایمیل",
-  "password" : "رمز عبور",
+  "password" : "کلمه عبور",
   "login" : "ورود",
   "create account" : "ایجاد حساب کاربری",
   "login to account" : "ورود به حساب کاربری",
   "register" : "ثبت نام",
   "there is no user with this email in the system." : "کاربری با این ایمیل در سامانه وجود ندارد",
-  "login success" : "ورود با موفقیت انجام شد"
+  "login success" : "ورود با موفقیت انجام شد",
+  "repeat password" : "تکرار کلمه عبور"
 }

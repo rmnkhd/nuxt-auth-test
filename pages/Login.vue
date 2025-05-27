@@ -11,9 +11,12 @@
               class="form-control"
               id="email"
               v-model="email"
-              required
+              :class="{ 'is-invalid': $v.email.$error }"
               placeholder="you@example.com"
           />
+          <div class="invalid-feedback" v-if="$v.email.$error">
+            {{ $t('invalid email') }}
+          </div>
         </div>
 
         <div class="mb-3">
@@ -23,9 +26,12 @@
               class="form-control"
               id="password"
               v-model="password"
-              required
+              :class="{ 'is-invalid': $v.password.$error }"
               placeholder="********"
           />
+          <div class="invalid-feedback" v-if="$v.password.$error">
+            {{ $t('password required') }}
+          </div>
         </div>
 
         <button type="submit" class="btn btn-primary w-100 mt-3">{{ $t('login') }}</button>
@@ -38,19 +44,23 @@
 // Vue
 import { ref } from 'vue'
 
+// Validators
+import useVuelidate from '@vuelidate/core'
+import { required, email as emailValidator } from '@vuelidate/validators'
+
 // Stores
-import { useAuthStore } from "~/store/auth.js";
+import { useAuthStore } from "~/store/auth.js"
 
 // Composable
-import { useToast } from '@/composables/toast.composable';
+import { useToast } from '@/composables/toast.composable'
 
 // Enums
-import ThemeColor from "~/enums/ThemeColor.js";
-import FirebaseMessages from "~/enums/FirebaseMessages.js";
+import ThemeColor from "~/enums/ThemeColor.js"
+import FirebaseMessages from "~/enums/FirebaseMessages.js"
 
 // Services
-import { t } from "@/services/language.service";
-import TokenService from "~/services/token.service.js";
+import { t } from "@/services/language.service"
+import TokenService from "~/services/token.service.js"
 
 export default {
   name: 'Login',
@@ -58,40 +68,50 @@ export default {
   setup() {
     const router = useRouter()
     const authStore = useAuthStore()
-
-    const { showToast } = useToast();
+    const { showToast } = useToast()
 
     const email = ref('')
     const password = ref('')
 
+    const rules = {
+      email: { required, email: emailValidator },
+      password: { required }
+    }
+
+    const v$ = useVuelidate(rules, { email, password })
+
     async function handleSubmit() {
+      v$.value.$touch()
+      if (v$.value.$invalid) return
+
       try {
-        authStore.login(email.value, password.value).then(( response ) => {
-          showToast({
-            theme: ThemeColor.SUCCESS,
-            body: t('login success'),
-          });
-          TokenService.set(response.accessToken)
-          return router.push('/dashboard')
+        const response = await authStore.login(email.value, password.value)
+
+        showToast({
+          theme: ThemeColor.SUCCESS,
+          body: t('login success'),
         })
-      } catch ( error ) {
+
+        TokenService.set(response.accessToken)
+        return router.push('/dashboard')
+
+      } catch (error) {
         showToast({
           theme: ThemeColor.DANGER,
-          body: error.message === FirebaseMessages.INVALID_LOGIN_CREDENTIALS ?
-              t('there is no user with this email in the system.')
-              : error.message
-        });
+          body:
+              error.message === FirebaseMessages.INVALID_LOGIN_CREDENTIALS
+                  ? t('there is no user with this email in the system.')
+                  : error.message,
+        })
       }
     }
 
     return {
       email,
       password,
-
-      handleSubmit
-    };
+      handleSubmit,
+      $v: v$
+    }
   }
-};
-
+}
 </script>
-
