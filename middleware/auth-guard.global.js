@@ -1,11 +1,9 @@
-import { isClient } from '@vueuse/core'
-
 // Services
 import TokenService from "~/services/token.service.js";
 
 export default defineNuxtRouteMiddleware((to) => {
     const publicPages = ['/login', '/signup']
-    const privatePages = ['/dashboard']
+    const privatePages = ['/']
 
     const tokenExists = TokenService.isExist()
 
@@ -14,6 +12,6 @@ export default defineNuxtRouteMiddleware((to) => {
     }
 
     if (tokenExists && publicPages.includes(to.path)) {
-        return navigateTo('/dashboard')
+        return navigateTo('/')
     }
 })

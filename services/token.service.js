@@ -1,4 +1,3 @@
-import StorageService from './storage.service';
 
 class TokenService {
     /**

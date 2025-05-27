@@ -1,7 +1,10 @@
 <template>
   <div class="login-container d-flex align-items-center justify-content-center vh-100 bg-light">
-    <div class="card shadow p-4 rounded-4" style="width: 100%; max-width: 400px;">
-      <h2 class="text-center mb-4 text-primary fw-bold">{{ $t('login to account') }}</h2>
+    <div class="card shadow p-4 rounded-4 login-card-container">
+
+      <h2 class="text-center mb-4 text-primary fw-bold">
+        {{ $t('login to account') }}
+      </h2>
 
       <form @submit.prevent="handleSubmit">
         <div class="mb-3">
@@ -61,6 +64,7 @@ import FirebaseMessages from "~/enums/FirebaseMessages.js"
 // Services
 import { t } from "@/services/language.service"
 import TokenService from "~/services/token.service.js"
+import StorageService from "~/services/storage.service.js";
 
 export default {
   name: 'Login',
@@ -91,9 +95,10 @@ export default {
           theme: ThemeColor.SUCCESS,
           body: t('login success'),
         })
-
+        console.log('response', response)
         TokenService.set(response.accessToken)
-        return router.push('/dashboard')
+        StorageService.set('user' , response.email)
+        return router.push('/')
 
       } catch (error) {
         showToast({

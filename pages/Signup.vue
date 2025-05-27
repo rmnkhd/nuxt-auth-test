@@ -1,6 +1,6 @@
 <template>
   <div class="login-container d-flex align-items-center justify-content-center vh-100 bg-light">
-    <div class="card shadow p-4 rounded-4" style="width: 100%; max-width: 400px;">
+    <div class="card shadow p-4 rounded-4 signup-card-container">
       <h2 class="text-center mb-4 text-primary fw-bold">{{ $t('create account') }}</h2>
 
       <form @submit.prevent="handleSubmit">
@@ -75,6 +75,7 @@ import ThemeColor from "~/enums/ThemeColor.js"
 // Services
 import { t } from "~/services/language.service.js"
 import TokenService from "~/services/token.service.js"
+import StorageService from "~/services/storage.service.js";
 
 export default {
   name: 'Signup',
@@ -109,7 +110,8 @@ export default {
         })
 
         TokenService.set(response.accessToken)
-        return router.push('/dashboard')
+        StorageService.set('user' , response.email)
+        return router.push('/')
 
       } catch (error) {
         showToast({

@@ -7,5 +7,7 @@
   "register" : "ثبت نام",
   "there is no user with this email in the system." : "کاربری با این ایمیل در سامانه وجود ندارد",
   "login success" : "ورود با موفقیت انجام شد",
-  "repeat password" : "تکرار کلمه عبور"
+  "repeat password" : "تکرار کلمه عبور",
+  "exit" : "خروج",
+  "dashboard" : "داشبورد"
 }
